@@ -1,13 +1,17 @@
 {
   "name": "t2-compile",
   "bin": {
-    "t2-compile": "./compile.sh"
+    "t2-compile": "./compile.sh",
+    "t2-compile-populate": "./populate.js"
   },
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mkdirp": "^0.5.1"
   },
   "keywords": [],
   "author": "",
