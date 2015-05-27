@@ -25,6 +25,10 @@ mkdir -p /tmp/t2-build
 cd /tmp/t2-build
 tar xf /tmp/t2-build-input.tar.gz
 
+npm install -g node-pre-gyp@0.6.7
+npm install -g git+https://github.com/tcr/node-pre-gypify.git
+node-pre-gypify
+
 export STAGING_DIR=/mnt/sda1/toolchain/
 export PANGYP_RUNTIME=iojs
 export NODEGYP=pangyp
@@ -74,10 +78,12 @@ export AS=${TARGET_CROSS}as
 export npm_config_arch=$ARCH
 export npm_config_node_gyp=$(which $NODEGYP)
 npm install --ignore-scripts
-./node_modules/.bin/node-pre-gyp rebuild --target=$NODE --debug
-./node_modules/.bin/node-pre-gyp package --target_platform=openwrt --target_arch=$ARCH --target=$NODE --debug
+node-pre-gyp rebuild --target=$NODE --debug
+node-pre-gyp package --target_platform=openwrt --target_arch=$ARCH --target=$NODE --debug
+node-pre-gyp rebuild --target=$NODE
+node-pre-gyp package --target_platform=openwrt --target_arch=$ARCH --target=$NODE
 
-find build/stage/pre-gyp -type f | xargs -i cp {} /tmp/t2-build-result
+find build/stage -type f | xargs -i cp {} /tmp/t2-build-result
 cd /tmp/t2-build-result; tar czf ../t2-build.tar.gz .
 
 # ./node_modules/.bin/node-pre-gyp unpublish --target_platform=openwrt --target_arch=$ARCH --target=$NODE --debug
