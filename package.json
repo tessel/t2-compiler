@@ -11,6 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "expand-tilde": "^1.2.0",
     "mkdirp": "^0.5.1"
   },
   "keywords": [],

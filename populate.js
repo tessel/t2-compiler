@@ -4,11 +4,7 @@ var fs = require('fs');
 var execSync = require('child_process').execSync;
 var mkdirp = require('mkdirp');
 var path = require('path');
-
-var target = {
-  'jpeg': '/Users/tim/.tessel/binaries/jpeg-v2.0.0-jpeg-node-v43-openwrt-ia32-Release.tar.gz',
-  'audiovideo': '/Users/tim/.tessel/binaries/audiovideo-v1.1.1-capture-node-v43-openwrt-ia32-Release.tar.gz',
-};
+var expandTilde = require('expand-tilde');
 
 function cmd () {
   console.error('$', arguments[0]);
@@ -56,10 +52,13 @@ function rebuild (dir) {
 
 function lookup(root, dir) {
   var pack = require(path.join(root, dir, 'package.json'));
-  // console.log(pack.name + '-' + pack.version + '-' + (pack.binary || {
-  //   'module_name': pack.name
-  // }) + '-v43-' + 'openwrt-ia32-Release.tar.gz')
-  return target[dir];
+  var basename = [pack.name, pack.version.replace(/^v?/, 'v'), 'node-v43', 'openwrt', 'ia32', 'Release'].join('-') + '.tar.gz';
+  var loc = expandTilde('~/.tessel/binaries/') + basename;
+  // console.log(loc);
+  if (!fs.existsSync(loc)) {
+    return null;
+  }
+  return loc;
 }
 
 function hunt (cur, doreplace, dorebuild) {

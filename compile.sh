@@ -1,6 +1,6 @@
 set -e
 
-VBoxManage controlvm t2-compile poweroff || true
+VBoxManage controlvm t2-compile poweroff 2>/dev/null || true
 # VBoxManage snapshot t2-compile restore boot
 VBoxManage startvm t2-compile --type headless
 
@@ -26,8 +26,8 @@ cd /tmp/t2-build
 tar xf /tmp/t2-build-input.tar.gz
 
 npm install -g node-pre-gyp@0.6.7
-npm install -g git+https://github.com/tcr/node-pre-gypify.git
-node-pre-gypify
+npm install -g "pre-gypify@^1.3.0"
+pre-gypify --package_name "{name}-v{version}-{node_abi}-{platform}-{arch}-{configuration}.tar.gz"
 
 export STAGING_DIR=/mnt/sda1/toolchain/
 export PANGYP_RUNTIME=iojs
