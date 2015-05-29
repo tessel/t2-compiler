@@ -1,8 +1,7 @@
 {
   "name": "t2-compiler",
   "bin": {
-    "t2-compile": "./compile.sh",
-    "t2-compile-populate": "./populate.js"
+    "t2-compiler": "./index.js"
   },
   "version": "1.0.0",
   "description": "",
@@ -12,7 +11,8 @@
   },
   "dependencies": {
     "expand-tilde": "^1.2.0",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "nomnom": "^1.8.1"
   },
   "keywords": [],
   "author": "",

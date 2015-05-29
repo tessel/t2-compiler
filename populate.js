@@ -43,7 +43,7 @@ function replace (url, dir) {
 function rebuild (dir) {
   // dir + '/build'
   try {
-    cmd('node-gyp rebuild', {
+    cmd('npm run install', {
       cwd: dir,
       stdio: 'inherit',
     });
@@ -79,11 +79,10 @@ function hunt (cur, doreplace, dorebuild) {
   } catch (e) {}
 }
 
-if (process.argv[2] != 'clean' &&
-  process.argv[2] != 'replace' &&
-  process.argv[2] != 'rebuild') {
-  console.error('Usage: allan (clean|replace|rebuild)');
-  process.exit(1);
-}
+exports.populate = function () {
+  hunt(fs.realpathSync('.'), true, false);
+};
 
-hunt(fs.realpathSync('.'), process.argv[2] == 'replace', process.argv[2] == 'rebuild');
+exports.depopulate = function () {
+  hunt(fs.realpathSync('.'), false, true);
+};
