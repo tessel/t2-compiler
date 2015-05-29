@@ -1,5 +1,5 @@
 {
-  "name": "t2-compile",
+  "name": "t2-compiler",
   "bin": {
     "t2-compile": "./compile.sh",
     "t2-compile-populate": "./populate.js"
