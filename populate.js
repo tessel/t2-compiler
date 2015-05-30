@@ -61,28 +61,32 @@ function lookup(root, dir) {
   return loc;
 }
 
+function huntself (root, dir, doreplace, dorebuild) {
+  try {
+    if (lookup(root, dir)) {
+      clean(path.join(root, dir));
+      doreplace && replace(lookup(root, dir), path.join(root, dir));
+      dorebuild && rebuild(path.join(root, dir));
+    }
+    hunt(path.join(root, dir), doreplace, dorebuild);
+  } catch (e) {}
+}
+
 function hunt (cur, doreplace, dorebuild) {
   try {
     var root = cur + '/node_modules/';
     fs.readdirSync(root).filter(function (dir) {
       return fs.lstatSync(root + dir).isDirectory();
     }).map(function (dir) {
-      try {
-        if (lookup(root, dir)) {
-          clean(root + dir);
-          doreplace && replace(lookup(root, dir), root + dir);
-          dorebuild && rebuild(root + dir);
-        }
-        hunt(root + dir, doreplace, dorebuild);
-      } catch (e) {}
+      huntself(root, dir, doreplace, dorebuild)
     });
   } catch (e) {}
 }
 
 exports.populate = function () {
-  hunt(fs.realpathSync('.'), true, false);
+  huntself(path.dirname(fs.realpathSync('.')), path.basename(fs.realpathSync('.')), true, false);
 };
 
 exports.depopulate = function () {
-  hunt(fs.realpathSync('.'), false, true);
+  huntself(path.dirname(fs.realpathSync('.')), path.basename(fs.realpathSync('.')), false, true);
 };
