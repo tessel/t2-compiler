@@ -4,7 +4,15 @@ var parser = require("nomnom");
 
 parser.command('build')
   .callback(function () {
-    require('./build');
+    var build = require('./build');
+
+    build.launch()
+    .then(function () {
+      return build.build();
+    })
+    .then(function () {
+      return build.terminate();
+    })
   })
   .help('compile this node package for target')
 

@@ -51,20 +51,23 @@ function awaitSSH () {
   });
 }
 
-pexec('VBoxManage controlvm t2-compile poweroff', {
-  silent: true,
-})
-.catch(function () {
-  // noop
-})
-.then(function () {
-  return pexec('VBoxManage startvm t2-compile --type headless');
-})
-.then(function () {
-  console.error('Waiting to connect over SSH...');
-  return awaitSSH();
-})
-.then(function () {
+function launch () {
+  return pexec('VBoxManage controlvm t2-compile poweroff', {
+    silent: true,
+  })
+  .catch(function () {
+    // noop
+  })
+  .then(function () {
+    return pexec('VBoxManage startvm t2-compile --type headless');
+  })
+  .then(function () {
+    console.error('Waiting to connect over SSH...');
+    return awaitSSH();
+  })
+}
+
+function build () {
   console.error('Uploading package...');
   return pexec('tar cf - --exclude .git --exclude node_modules .', {
     silent: true
@@ -72,31 +75,36 @@ pexec('VBoxManage controlvm t2-compile poweroff', {
   .pipe(vmexec('cat > /tmp/t2-build-input.tar.gz', {
     silent: true
   }))
-})
-.then(function () {
-  var date = df.asString('yyMMddhhmm.ss', new Date(Date.now()+new Date().getTimezoneOffset()*60*1000));
-  return vmexec('sudo date --set="' + date + '"')
-})
-.then(function () {
-  console.error('Running build script...');
-  var ret = vmexec('');
-  fs.createReadStream(__dirname + '/build-remote.sh').pipe(ret.stdin);
-  return ret;
-})
-.then(function () {
-  // cat test.sh | sshpass -p 'tcuser' ssh tc@localhost -p 4455
-  mkdirp.sync(BINARIES_PATH);
-
-  return vmexec('cat /tmp/t2-build.tar.gz', {
-    silent: true
+  .then(function () {
+    var date = df.asString('yyMMddhhmm.ss', new Date(Date.now()+new Date().getTimezoneOffset()*60*1000));
+    return vmexec('sudo date --set="' + date + '"')
   })
-  .pipe(pexec('tar -xjf - -C ' + BINARIES_PATH, {
-    silent: true
-  }))
-})
-.then(function () {
-  return pexec('VBoxManage controlvm t2-compile poweroff');
-})
-.then(function () {
-  console.error('Done.');
-})
+  .then(function () {
+    console.error('Running build script...');
+    var ret = vmexec('');
+    fs.createReadStream(__dirname + '/build-remote.sh').pipe(ret.stdin);
+    return ret;
+  })
+  .then(function () {
+    // cat test.sh | sshpass -p 'tcuser' ssh tc@localhost -p 4455
+    mkdirp.sync(BINARIES_PATH);
+
+    return vmexec('cat /tmp/t2-build.tar.gz', {
+      silent: true
+    })
+    .pipe(pexec('tar -xjf - -C ' + BINARIES_PATH, {
+      silent: true
+    }))
+  })
+}
+
+function terminate () {
+  return pexec('VBoxManage controlvm t2-compile poweroff')
+  .then(function () {
+    console.error('Done.');
+  })
+}
+
+exports.launch = launch;
+exports.build = build;
+exports.terminate = terminate;
