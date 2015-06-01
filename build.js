@@ -6,8 +6,10 @@ var df = require('date-format');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var expandTilde = require('expand-tilde');
+var os = require('os');
 
 var BINARIES_PATH = expandTilde('~/.tessel/binaries');
+var VM_NAME = 'tessel2-compiler';
 
 function pexec (str, opts) {
   opts = opts || {};
@@ -51,15 +53,42 @@ function awaitSSH () {
   });
 }
 
-function launch () {
-  return pexec('VBoxManage controlvm t2-compile poweroff', {
-    silent: true,
-  })
-  .catch(function () {
-    // noop
+function importVM () {
+  return pexec('VBoxManage import /tmp/t2-compiler-vm.ova --vsys 0 --vmname ' + quote([VM_NAME]) + ' --cpus ' + os.cpus().length)
+}
+
+function existsVM () {
+  return pexec('VBoxManage showvminfo ' + quote([VM_NAME]), {
+    silent: true
   })
   .then(function () {
-    return pexec('VBoxManage startvm t2-compile --type headless');
+    return true;
+  }, function () {
+    return false;
+  })
+}
+
+function launch () {
+  return existsVM()
+  .then(function (existence) {
+    if (!existence) {
+      console.error('Downloading VM image...')
+      return pexec('curl -o /tmp/t2-compiler-vm.ova http://storage.googleapis.com/tessel-builds/t2-compiler-vm.ova')
+      .then(function () {
+        return importVM();
+      });
+    }
+  })
+  .then(function () {
+    return pexec('VBoxManage controlvm ' + VM_NAME + ' poweroff', {
+      silent: true,
+    })
+    .catch(function () {
+      // noop
+    })
+  })
+  .then(function () {
+    return pexec('VBoxManage startvm ' + VM_NAME + ' --type headless');
   })
   .then(function () {
     console.error('Waiting to connect over SSH...');
@@ -99,12 +128,17 @@ function build () {
 }
 
 function terminate () {
-  return pexec('VBoxManage controlvm t2-compile poweroff')
+  return pexec('VBoxManage controlvm ' + VM_NAME + ' poweroff')
   .then(function () {
     console.error('Done.');
   })
 }
 
+function acquire () {
+  return launch().disposer(terminate);
+}
+
 exports.launch = launch;
 exports.build = build;
 exports.terminate = terminate;
+exports.acquire = acquire;

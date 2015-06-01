@@ -1,18 +1,15 @@
 #!/usr/bin/env node
 
+var Promise = require('bluebird');
 var parser = require("nomnom");
 
 parser.command('build')
   .callback(function () {
     var build = require('./build');
 
-    build.launch()
-    .then(function () {
+    Promise.using(build.acquire(), function () {
       return build.build();
-    })
-    .then(function () {
-      return build.terminate();
-    })
+    });
   })
   .help('compile this node package for target')
 
