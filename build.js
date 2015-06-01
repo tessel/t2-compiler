@@ -1,4 +1,5 @@
 var Promise = require('bluebird');
+var quote = require('shell-quote').quote;
 var parse = require('shell-quote').parse;
 var spawn = require('child_process').spawn;
 var df = require('date-format');
@@ -28,7 +29,23 @@ function pexec (str, opts) {
 }
 
 function vmexec (str, opts) {
-  return pexec('sshpass -p "tcuser" ssh tc@localhost -p 4455 ' + str, opts);
+  return pexec('sshpass -p "tcuser" ssh tc@localhost -p 4455 ' + quote([str]), opts);
+}
+
+function awaitSSH () {
+  // Poll every second for a response from uname -a
+  return new Promise(function loop (resolve, reject) {
+    vmexec('uname -a')
+    .then(function success () {
+      resolve();
+    }, function error () {
+      Promise.resolve()
+      .delay(1000)
+      .then(function () {
+        setImmediate(loop, reject, resolve);
+      })
+    })
+  });
 }
 
 pexec('VBoxManage controlvm t2-compile poweroff', {
@@ -41,32 +58,24 @@ pexec('VBoxManage controlvm t2-compile poweroff', {
   return pexec('VBoxManage startvm t2-compile --type headless');
 })
 .then(function () {
-  return new Promise(function loop (resolve, reject) {
-    vmexec('"uname -a"')
-    .then(function success () {
-      resolve();
-    }, function error () {
-      Promise.resolve()
-      .delay(1000)
-      .then(function () {
-        setImmediate(loop, reject, resolve);
-      })
-    })
-  });
+  console.error('Waiting to connect over SSH...');
+  return awaitSSH();
 })
 .then(function () {
+  console.error('Uploading package...');
   return pexec('tar cf - --exclude .git --exclude node_modules .', {
     silent: true
   })
-  .pipe(pexec('sshpass -p "tcuser" ssh tc@localhost -p 4455 "cat > /tmp/t2-build-input.tar.gz"', {
+  .pipe(vmexec('cat > /tmp/t2-build-input.tar.gz', {
     silent: true
   }))
 })
 .then(function () {
   var date = df.asString('yyMMddhhmm.ss', new Date(Date.now()+new Date().getTimezoneOffset()*60*1000));
-  return vmexec('"sudo date --set=\\"' + date + '\\""')
+  return vmexec('sudo date --set="' + date + '"')
 })
 .then(function () {
+  console.error('Running build script...');
   var ret = vmexec('');
   fs.createReadStream(__dirname + '/build-remote.sh').pipe(ret.stdin);
   return ret;
@@ -75,7 +84,7 @@ pexec('VBoxManage controlvm t2-compile poweroff', {
   // cat test.sh | sshpass -p 'tcuser' ssh tc@localhost -p 4455
   mkdirp.sync('~/.tessel/binaries');
 
-  return vmexec('"cat /tmp/t2-build.tar.gz"', {
+  return vmexec('cat /tmp/t2-build.tar.gz', {
     silent: true
   })
   .pipe(pexec('tar -xjf - -C ~/.tessel/binaries', {
