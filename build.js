@@ -5,6 +5,9 @@ var spawn = require('child_process').spawn;
 var df = require('date-format');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
+var expandTilde = require('expand-tilde');
+
+var BINARIES_PATH = expandTilde('~/.tessel/binaries');
 
 function pexec (str, opts) {
   opts = opts || {};
@@ -82,12 +85,12 @@ pexec('VBoxManage controlvm t2-compile poweroff', {
 })
 .then(function () {
   // cat test.sh | sshpass -p 'tcuser' ssh tc@localhost -p 4455
-  mkdirp.sync('~/.tessel/binaries');
+  mkdirp.sync(BINARIES_PATH);
 
   return vmexec('cat /tmp/t2-build.tar.gz', {
     silent: true
   })
-  .pipe(pexec('tar -xjf - -C ~/.tessel/binaries', {
+  .pipe(pexec('tar -xjf - -C ' + BINARIES_PATH, {
     silent: true
   }))
 })
