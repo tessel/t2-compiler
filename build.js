@@ -13,7 +13,9 @@ var VM_NAME = 'tessel2-compiler';
 
 function pexec (str, opts) {
   opts = opts || {};
-  var p = spawn(parse(str).shift(), parse(str).slice(1));
+  var p = spawn(parse(str).shift(), parse(str).slice(1), {
+    cwd: opts.cwd,
+  });
   var prom = new Promise(function (resolve, reject) {
     if (opts.silent !== true) {
       p.stdout.pipe(process.stderr);
@@ -21,7 +23,11 @@ function pexec (str, opts) {
     }
     p.on('exit', function (code) {
       code ? reject(code) : resolve();
-    })
+    });
+    p.on('error', function (err) {
+      console.error(err);
+      throw err;
+    });
   })
   prom.stdout = p.stdout;
   prom.stdin = p.stdin;
@@ -94,12 +100,20 @@ function launch () {
     console.error('Waiting to connect over SSH...');
     return awaitSSH();
   })
+  .then(function () {
+    console.error('Running init script...');
+    var ret = vmexec('');
+    fs.createReadStream(__dirname + '/build-remote-init.sh').pipe(ret.stdin);
+    return ret;
+  })
 }
 
-function build () {
+function build (target) {
+  target = target || '.';
   console.error('Uploading package...');
   return pexec('tar cf - --exclude .git --exclude node_modules .', {
-    silent: true
+    silent: true,
+    cwd: require('path').join(target, '.'),
   })
   .pipe(vmexec('cat > /tmp/t2-build-input.tar.gz', {
     silent: true

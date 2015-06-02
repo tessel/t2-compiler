@@ -6,8 +6,6 @@ mkdir -p /tmp/t2-build
 cd /tmp/t2-build
 tar xf /tmp/t2-build-input.tar.gz
 
-npm install -g node-pre-gyp@0.6.7
-npm install -g "pre-gypify@^1.3.0"
 pre-gypify --package_name "{name}-v{version}-{node_abi}-{platform}-{arch}-{configuration}.tar.gz"
 
 export STAGING_DIR=/mnt/sda1/toolchain/
