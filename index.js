@@ -55,7 +55,14 @@ parser.command('build')
     flag: true,
     default: false,
   })
+  .option('target', {
+    default: 'vm',
+    choices: ['vm', 't2'],
+  })
   .callback(function (opts) {
+    process.env.T2_COMPILER_TARGET = opts.target;
+    console.error('target=' + opts.target);
+
     compile(fs.realpathSync('.'), opts.recursive !== false, opts.force)
     .then(function () {
       console.error('done.');
@@ -75,7 +82,14 @@ parser.command('populate')
     flag: true,
     default: true,
   })
+  .option('target', {
+    default: 'vm',
+    choices: ['vm', 't2'],
+  })
   .callback(function (opts) {
+    process.env.T2_COMPILER_TARGET = opts.target;
+    console.error('target=' + opts.target);
+
     Promise.try(function () {
       if (opts['build-needed']) {
         return compile(fs.realpathSync('.'), opts.recursive !== false, opts.force)
@@ -86,6 +100,7 @@ parser.command('populate')
     })
     .then(function () {
       require('./populate').populate();
+      console.error('Done.');
     })
   })
   .help('populate archive with target builds')

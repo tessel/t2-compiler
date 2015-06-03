@@ -12,7 +12,12 @@ export STAGING_DIR=/mnt/sda1/toolchain/
 export PANGYP_RUNTIME=iojs
 export NODEGYP=pangyp
 export NODE=1.2.0
-export ARCH=ia32
+#export TOOLCHAIN_ARCH=mips
+#export ARCH=mipsel
+
+echo OHOHOH
+echo $TOOLCHAIN_ARCH
+echo $NODE
 
 set -e
 
@@ -25,10 +30,10 @@ ARCH=${ARCH:-mipsel}
 NODE=${NODE:-0.10.33}
 NODEGYP=${NODEGYP:-node-gyp}
 
-TOOLCHAIN_DIR=$(ls -d "$STAGING_DIR/toolchain-"*)
+TOOLCHAIN_DIR=$(ls -d "$STAGING_DIR/toolchain-"*"$TOOLCHAIN_ARCH"*)
 echo $TOOLCHAIN_DIR
 
-export SYSROOT=$(ls -d "$STAGING_DIR/target-"*)
+export SYSROOT=$(ls -d "$STAGING_DIR/target-"*"$TOOLCHAIN_ARCH"*)
 
 source $TOOLCHAIN_DIR/info.mk # almost a bash script
 

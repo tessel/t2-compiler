@@ -6,10 +6,20 @@ var df = require('date-format');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var expandTilde = require('expand-tilde');
+var addStream = require('add-stream');
 var os = require('os');
+var strs = require('stringstream')
 
 var BINARIES_PATH = expandTilde('~/.tessel/binaries');
 var VM_NAME = 'tessel2-compiler';
+
+function bufs (buf) {
+  var Readable = require('stream').Readable
+  var s = new Readable
+  s.push(buf)    // the string you want
+  s.push(null)      // indicates end-of-file basically - the end of the stream
+  return s;
+}
 
 function pexec (str, opts) {
   opts = opts || {};
@@ -103,7 +113,8 @@ function launch () {
   .then(function () {
     console.error('Running init script...');
     var ret = vmexec('');
-    fs.createReadStream(__dirname + '/build-remote-init.sh').pipe(ret.stdin);
+    fs.createReadStream(__dirname + '/build-remote-init.sh')
+    .pipe(ret.stdin);
     return ret;
   })
 }
@@ -125,7 +136,11 @@ function build (target) {
   .then(function () {
     console.error('Running build script...');
     var ret = vmexec('');
-    fs.createReadStream(__dirname + '/build-remote.sh').pipe(ret.stdin);
+    bufs(process.env.T2_COMPILER_TARGET == 't2' ?
+      'export TOOLCHAIN_ARCH=mips\nexport ARCH=mipsel\n' :
+      'export TOOLCHAIN_ARCH=i386\nexport ARCH=ia32\n')
+    .pipe(addStream(fs.createReadStream(__dirname + '/build-remote.sh')))
+    .pipe(ret.stdin);
     return ret;
   })
   .then(function () {

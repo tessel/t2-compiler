@@ -51,8 +51,9 @@ function rebuild (dir) {
 }
 
 function lookup (root, dir) {
+  var target = process.env.T2_COMPILER_TARGET;
   var pack = require(path.join(root, dir, 'package.json'));
-  var basename = [pack.name, pack.version.replace(/^v?/, 'v'), 'node-v43', 'openwrt', 'ia32', 'Release'].join('-') + '.tar.gz';
+  var basename = [pack.name, pack.version.replace(/^v?/, 'v'), 'node-v43', 'openwrt', target == 't2' ? 'mipsel' : 'ia32', 'Release'].join('-') + '.tar.gz';
   var loc = expandTilde('~/.tessel/binaries/') + basename;
   // console.log(loc);
   if (!fs.existsSync(loc)) {
