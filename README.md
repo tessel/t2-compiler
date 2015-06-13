@@ -36,7 +36,7 @@ git clone https://gist.github.com/tcr/b99edad665936b46f20a hello-world
 cd hello-world
 ```
 
-This is a binary Node module, meaning that it has code written in C with bindings to a JavaScript API. This module defines a function, `hello.world()`, that returns the C string "hello world!" as follows:
+This is a binary Node module, meaning that it has code written in C++ with bindings to a JavaScript API. This module defines a function, `hello.world()`, that returns the C string "hello world!" as follows:
 
 ```cc
 #include <nan.h>
