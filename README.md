@@ -20,6 +20,13 @@ npm install -g git+https://github.com/tessel/t2-vm
 npm install -g git+https://github.com/tessel/t2-compiler
 ```
 
+Install the SSHPass command line dependency:
+
+```
+# For OSX
+brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
+```
+
 Initialize and run the Tessel 2 VM:
 
 ```
