@@ -18,10 +18,10 @@ which nvm || { curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0
 export NVM_DIR="/home/vagrant/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
-nvm install 4.2.0
-nvm use 4.2.0
+nvm install 4.2.1
+nvm use 4.2.1
 npm i -g pre-gypify node-pre-gyp node-gyp
-node-gyp install 4.1.2
+node-gyp install 4.2.1
 
 rm -rf /work/binary-module/output
 mkdir -p /work/binary-module/output
@@ -33,7 +33,7 @@ pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
 
 export STAGING_DIR=/home/vagrant/
 export NODEGYP=node-gyp
-export NODE=4.1.2
+export NODE=4.2.1
 export TOOLCHAIN_ARCH=mipsel
 #export ARCH=mipsel
 
@@ -49,7 +49,7 @@ if [ ! -d "$STAGING_DIR" ]; then
 fi
 
 ARCH=${ARCH:-mipsel}
-NODE=${NODE:-4.1.2}
+NODE=${NODE:-4.2.1}
 NODEGYP=${NODEGYP:-node-gyp}
 
 TOOLCHAIN_DIR=$(ls -d "$STAGING_DIR/toolchain-"*"$TOOLCHAIN_ARCH"_*)
@@ -101,7 +101,7 @@ vagrant ssh-config > ssh.conf
 
 rm -rf out; mkdir out
 echo 'downloading package...'
-vagrant ssh -c "rm -rf /work/binary-module/; mkdir -p /work/binary-module/build; cd /work/binary-module; npm pack $FOLDER_PATH; tar xf *.tgz; rm *.tgz"
+vagrant ssh -c "rm -rf /work/binary-module/; mkdir -p /work/binary-module/build; cd /work/binary-module; ls -la; npm pack $FOLDER_PATH; tar xf *.tgz; rm *.tgz"
 echo 'running build...'
 vagrant ssh -c "$RUN_SCRIPT" || exit 1
 echo 'downloading files...'
