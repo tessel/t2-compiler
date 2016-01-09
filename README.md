@@ -1,15 +1,10 @@
 # t2-compiler
 [![Code of Conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg?style=flat)](https://github.com/tessel/project/blob/master/CONDUCT.md)
+[![Travis Build Status](https://travis-ci.org/tessel/t2-compiler.svg?branch=master)](https://travis-ci.org/tessel/t2-compiler)
+
+A cross compiler for npm packages that use node-gyp or node-pre-gyp that stores on s3 for use by the tessel cli.
 
 [Docker Hub | tessel/t2-compiler](https://hub.docker.com/r/tessel/t2-compiler/)
-
-<!--
-    This stuff is pointless to display until we have an actual server written
-
-[![Travis Build Status](https://travis-ci.org/tessel/t2-compiler.svg?branch=master)](https://travis-ci.org/tessel/t2-compiler)
-[![Build status](https://ci.appveyor.com/api/projects/status/fsjh9hxbf1w09794?svg=true)](https://ci.appveyor.com/project/rwaldron/t2-compiler)
-
--->
 
 ## Building Packages
 
@@ -70,3 +65,9 @@ Master is automatically built and pushed by the docker-hub service with our tess
 docker build -t tessel/t2-compiler ./
 docker push tessel/t2-compiler
 ```
+
+### Server Infrastructure
+
+- Auth is handled by aws roles and groups, human operators deploying need to be in the `t2-compiler` group
+- SNS Topic `t2-compiler-events` gets sns json messages with one guaranteed key `{type}`
+- Cloudwatch Rule `t2-compiler-schedule` set to send `{"type": "timer", "period": 600}` every 5 minutes

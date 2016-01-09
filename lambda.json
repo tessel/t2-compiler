@@ -1,0 +1,6 @@
+{
+  "Handler": "index.handler",
+  "Role": "arn:aws:iam::047869558202:role/t2-compiler",
+  "Timeout": 10,
+  "Runtime": "nodejs4.3"
+}
