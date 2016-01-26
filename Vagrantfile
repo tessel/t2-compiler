@@ -66,7 +66,7 @@ Vagrant.configure(2) do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-    sudo apt-get install -y nodejs axel
+    sudo apt-get install -y nodejs axel git
     rm -rf toolchain*
     axel -a https://tessel-builds.s3.amazonaws.com/firmware/toolchain-mipsel.tar.gz
     mkdir toolchain-mipsel
