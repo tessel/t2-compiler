@@ -64,14 +64,14 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-    curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-    sudo apt-get install -y nodejs axel git
-    rm -rf toolchain*
-    axel -a https://tessel-builds.s3.amazonaws.com/firmware/toolchain-mipsel.tar.gz
+  config.vm.provision "shell", keep_color: true, inline: <<-SHELL
+    curl -sL https://deb.nodesource.com/setup_4.x | bash -
+    apt-get install -y nodejs axel git
+    rm -rfv toolchain*
+    axel -q https://tessel-builds.s3.amazonaws.com/firmware/toolchain-mipsel.tar.gz
     mkdir toolchain-mipsel
-    tar xvf toolchain-mipsel.tar.gz
-    mkdir /work || true
+    sudo -u vagrant tar -xf toolchain-mipsel.tar.gz
+    mkdir -p /work
     chown -R vagrant /work
   SHELL
 end
