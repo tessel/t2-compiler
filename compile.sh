@@ -85,11 +85,11 @@ export npm_config_arch=$ARCH
 export npm_config_node_gyp=$(which $NODEGYP)
 npm install --ignore-scripts
 
-node-pre-gyp rebuild --target_platform=openwrt --target_arch=$ARCH --target=$NODE --debug
-node-pre-gyp package --target_platform=openwrt --target_arch=$ARCH --target=$NODE --debug
+node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
+node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
 find build/stage -type f | xargs -i cp {} /work/binary-module/output
-node-pre-gyp rebuild --target_platform=openwrt --target_arch=$ARCH --target=$NODE
-node-pre-gyp package --target_platform=openwrt --target_arch=$ARCH --target=$NODE
+node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE
+node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE
 find build/stage -type f | xargs -i cp {} /work/binary-module/output
 EOF
 
