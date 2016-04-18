@@ -20,7 +20,7 @@ export NVM_DIR="/home/vagrant/.nvm"
 
 nvm install 4.2.1
 nvm use 4.2.1
-npm i -g pre-gypify node-pre-gyp node-gyp
+npm i -g rwaldron/pre-gypify#merge-package-json-instead-of-overwriting node-pre-gyp node-gyp
 node-gyp install 4.2.1
 
 rm -rf /work/binary-module/output
@@ -28,8 +28,6 @@ mkdir -p /work/binary-module/output
 cd /work/binary-module/package
 
 set -x
-
-pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
 
 export STAGING_DIR=/home/vagrant/
 export NODEGYP=node-gyp
@@ -84,6 +82,9 @@ export AS=${TARGET_CROSS}as
 export npm_config_arch=$ARCH
 export npm_config_node_gyp=$(which $NODEGYP)
 npm install --ignore-scripts
+
+
+pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
 
 node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
 node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
