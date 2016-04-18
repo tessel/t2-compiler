@@ -29,8 +29,6 @@ cd /work/binary-module/package
 
 set -x
 
-pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
-
 export STAGING_DIR=/home/vagrant/
 export NODEGYP=node-gyp
 export NODE=4.2.1
@@ -84,6 +82,8 @@ export AS=${TARGET_CROSS}as
 export npm_config_arch=$ARCH
 export npm_config_node_gyp=$(which $NODEGYP)
 npm install --ignore-scripts
+
+pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
 
 node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
 node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
