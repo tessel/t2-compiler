@@ -1,62 +1,37 @@
 #!/bin/bash
+set -e
 
-FOLDER_PATH=$1
+PACKAGE_NAME=$1
+OUTPUT_DIR=$2
+ARCH=mipsel
+export STAGING_DIR=/root
 
-if [[ "$FOLDER_PATH" == '' ]]; then
-	echo 'Usage: compile.sh package-name'
+if [[ "$PACKAGE_NAME" == '--help' || "$PACKAGE_NAME" == '' ]]; then
+  echo "Usage: "
+	echo "    $0 [package name]<@version> [output_dir/]"
 	exit 1
 fi
 
-
-read -r -d '' RUN_SCRIPT <<'EOF'
-#!/bin/bash
-
-set -e
-
-which nvm || { curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.29.0/install.sh | bash; }
-
-export NVM_DIR="/home/vagrant/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
-nvm install 4.4.3
-npm i -g pre-gypify node-pre-gyp node-gyp
-node-gyp install 4.4.3
-
-rm -rf /work/binary-module/output
-mkdir -p /work/binary-module/output
-cd /work/binary-module/package
-
-set -x
-
-export STAGING_DIR=/home/vagrant/
-export NODEGYP=node-gyp
-export NODE=4.4.3
-export TOOLCHAIN_ARCH=mipsel
-#export ARCH=mipsel
-
-echo OHOHOH
-echo $TOOLCHAIN_ARCH
-echo $NODE
-
-set -e
-
-if [ ! -d "$STAGING_DIR" ]; then
-    echo "STAGING_DIR needs to be set to your cross toolchain path";
-    exit 1
+if [ ! -d "$OUTPUT_DIR" ]; then
+  (>&2 echo "ERROR: The output directory ${OUTPUT_DIR} doesn't exist")
+  exit 1
 fi
 
-ARCH=${ARCH:-mipsel}
-NODE=${NODE:-4.4.3}
-NODEGYP=${NODEGYP:-node-gyp}
+: "${NODE_VERSION?Need to set the env var NODE_VERSION}"
 
-TOOLCHAIN_DIR=$(ls -d "$STAGING_DIR/toolchain-"*"$TOOLCHAIN_ARCH"_*)
-echo $TOOLCHAIN_DIR
-
-export SYSROOT=$(ls -d "$STAGING_DIR/target-"*"$TOOLCHAIN_ARCH"_*)
-
+TOOLCHAIN_DIR=$(ls -d "/root/toolchain-"*"$ARCH"_*)
+SYSROOT=$(ls -d "/root/target-"*"$ARCH"_*)
 source $TOOLCHAIN_DIR/info.mk # almost a bash script
 
-echo "Cross-compiling for" $TARGET_CROSS
+echo "Cross-compiling $PACKAGE_NAME for for ${ARCH} node@${NODE_VERSION} abi@$(node -p process.versions.modules)"
+
+mkdir build
+cd build
+
+npm pack $PACKAGE_NAME > /dev/null;
+tar xf *.tgz;
+cd package
+
 
 export PATH=$TOOLCHAIN_DIR/bin:$PATH
 export CPPPATH=$TARGET_DIR/usr/include
@@ -78,30 +53,19 @@ export OBJDUMP=${TARGET_CROSS}objdump
 export NM=${TARGET_CROSS}nm
 export AS=${TARGET_CROSS}as
 
-export npm_config_arch=$ARCH
-export npm_config_node_gyp=$(which $NODEGYP)
-npm install --ignore-scripts
+npm_config_arch=$ARCH
+npm_config_node_gyp=$(which node-gyp)
 
+set -x
+npm install --ignore-scripts # 2>1 >/dev/null
 pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
 
-node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
-node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE --debug
-find build/stage -type f | xargs -i cp {} /work/binary-module/output
-node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE
-node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE
-find build/stage -type f | xargs -i cp {} /work/binary-module/output
-EOF
+echo "Release build"
+node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
+node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
+mv -vn build/stage/*.tgz $OUTPUT_DIR
 
-set -e
-
-cd $(dirname $0)
-
-vagrant ssh-config > ssh.conf
-
-rm -rf out; mkdir out
-echo 'downloading package...'
-vagrant ssh -c "rm -rf /work/binary-module/; mkdir -p /work/binary-module/build; cd /work/binary-module; ls -la; npm pack $FOLDER_PATH; tar xf *.tgz; rm *.tgz"
-echo 'running build...'
-vagrant ssh -c "$RUN_SCRIPT" || exit 1
-echo 'downloading files...'
-rsync -avz -e 'ssh -F ./ssh.conf' default:/work/binary-module/output/. ./out
+echo "Debug build"
+node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
+node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
+mv -vn build/stage/*.tgz $OUTPUT_DIR

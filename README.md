@@ -10,31 +10,35 @@
 
 -->
 
-# Building Packages
+## Building Packages
 
-## Vagrant Method
+Use vagrant or docker
+
+### Vagrant
 Install vagrant
 
 ```
 vagrant up
-./compile.sh serialport@2.0.5
+./compile-vagrant.sh serialport@2.0.5
 ```
 
 Look in the 'out' directory
 
-## Docker
+### Docker
 
 If you want to use docker you can run;
 
 ```bash
-# docker run -v ~/Desktop:/out tessel/t2-compiler [package name]<@version>
-# eg to put the packages in the current directory
+# puts the output in the `./out` directory (wont overwrite existing files)
+./compile-docker.sh serialport@4.0.0
 
-docker run -v `pwd`:/out tessel/t2-compiler serialport@4.0.0
+# docker run -v ~/Desktop:/out tessel/t2-compiler [package name]<@version>
+# eg to put the packages in the current directory (wont overwrite existing files)
+docker run -v `pwd`:/out tessel/t2-compiler serialport@4.0.0 /out
 
 ```
 
-### Developing the compiler
+#### Developing the compiler
 
 Clone this repo, cd into it, make changes to compile-docker.sh and...
 
