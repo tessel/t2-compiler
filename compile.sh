@@ -19,12 +19,15 @@ fi
 
 : "${NODE_VERSION?Need to set the env var NODE_VERSION}"
 
+cd $(dirname $0)
+
 TOOLCHAIN_DIR=$(ls -d "/root/toolchain-"*"$ARCH"_*)
 SYSROOT=$(ls -d "/root/target-"*"$ARCH"_*)
 source $TOOLCHAIN_DIR/info.mk # almost a bash script
 
 echo "Cross-compiling $PACKAGE_NAME for for ${ARCH} node@${NODE_VERSION} abi@$(node -p process.versions.modules)"
 
+rm -rf build
 mkdir build
 cd build
 
