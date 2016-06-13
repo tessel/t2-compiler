@@ -44,6 +44,7 @@ Clone this repo, cd into it, make changes to compile-docker.sh and...
 
 ```bash
 docker build -t tessel/t2-compiler ./
+docker push tessel/t2-compiler
 ```
 
 To get an interactive shell run
