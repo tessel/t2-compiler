@@ -61,7 +61,7 @@ npm_config_node_gyp=$(which node-gyp)
 
 set -x
 npm install --ignore-scripts # 2>1 >/dev/null
-pre-gypify --package_name "{name}-{version}-{configuration}.tgz"
+pre-gypify --package_name "{name}-{version}-{configuration}-{node_abi}-{platform}-{arch}.tgz"
 
 echo "Release build"
 node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
