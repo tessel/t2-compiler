@@ -12,7 +12,7 @@ RUN apt-get update \
   && apt-get clean -y
 
 # Install node 4x
-ENV NODE_VERSION 4.4.3
+ENV NODE_VERSION 4.5.0
 RUN curl -s https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz | tar -xz
 ENV PATH $PATH:/root/node-v${NODE_VERSION}-linux-x64/bin
 

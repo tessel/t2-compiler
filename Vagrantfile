@@ -28,8 +28,8 @@ Vagrant.configure(2) do |config|
     curl -s https://tessel-builds.s3.amazonaws.com/firmware/toolchain-mipsel.tar.gz | tar -xz
 
     # Install node
-    export NODE_VERSION=4.4.3
-    echo "NODE_VERSION=4.4.3" >> /etc/environment
+    export NODE_VERSION=4.5.0
+    echo "NODE_VERSION=4.5.0" >> /etc/environment
 
     curl -s https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz | tar -xz
 
