@@ -41,7 +41,7 @@ export CPPPATH=$TARGET_DIR/usr/include
 export LIBPATH=$TARGET_DIR/usr/lib
 
 #TODO: anything better than this hack?
-OPTS="-I $SYSROOT/usr/include -L $TOOLCHAIN_DIR/lib -L $SYSROOT/usr/lib"
+OPTS="-I $SYSROOT/usr/include -L $TOOLCHAIN_DIR/lib -L $SYSROOT/usr/lib -L $SYSROOT/lib"
 
 export CC="${TARGET_CROSS}gcc $OPTS"
 export CXX="${TARGET_CROSS}g++ $OPTS"
