@@ -32,16 +32,31 @@ If you want to use docker you can run;
 ```bash
 # puts the output in the `./out` directory (wont overwrite existing files)
 ./compile-docker.sh serialport@4.0.0
+```
 
-# docker run -v ~/Desktop:/out tessel/t2-compiler [package name]<@version>
-# eg to put the packages in the current directory (wont overwrite existing files)
-docker run -v `pwd`:/out tessel/t2-compiler serialport@4.0.0 /out
+To update to the latest t2-compiler from docker hub.
 
+```bash
+docker pull tessel/t2-compiler
 ```
 
 #### Developing the compiler
 
-Clone this repo, cd into it, make changes to compile-docker.sh and...
+To build your local Dockerfile
+```bash
+# build the local directory and name it
+docker build ./ -t t2-compiler-dev
+
+# verify the localally built images
+docker images
+# REPOSITORY           TAG                 IMAGE ID            CREATED              SIZE
+# t2-compiler-dev      latest              75f126974601        About a minute ago   1.281 GB
+
+# Run the local image you've built
+docker run --rm -v `pwd`/out:/out t2-compiler-dev serialport@4.0.0 /out
+```
+
+Master is automatically built and pushed by the docker-hub service with our tessel account. It's the equivalent of;
 
 ```bash
 docker build -t tessel/t2-compiler ./
@@ -49,8 +64,10 @@ docker push tessel/t2-compiler
 ```
 
 To get an interactive shell run
-
 ```
+# from docker hub
 docker run -it --entrypoint bash tessel/t2-compiler
+# from local dev image
+docker run -it --entrypoint bash t2-compiler-dev
 ```
 
