@@ -56,13 +56,6 @@ docker images
 docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.0 /out
 ```
 
-Master is automatically built and pushed by the docker-hub service with our tessel account. It's the equivalent of;
-
-```bash
-docker build -t tessel/t2-compiler ./
-docker push tessel/t2-compiler
-```
-
 To get an interactive shell run
 ```
 # from docker hub
@@ -71,3 +64,9 @@ docker run -it --rm --entrypoint bash tessel/t2-compiler
 docker run -it --rm --entrypoint bash t2-compiler:dev
 ```
 
+Master is automatically built and pushed by the docker-hub service with our tessel account. It's the equivalent of;
+
+```bash
+docker build -t tessel/t2-compiler ./
+docker push tessel/t2-compiler
+```
