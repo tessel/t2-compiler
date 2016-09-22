@@ -12,14 +12,19 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = 'ubuntu/trusty64'
 
-  config.vm.synced_folder "./out", "/root/out"
+  config.vm.provider 'virtualbox' do |v|
+    v.memory = 1024
+    v.cpus = 2
+  end
+
+  config.vm.synced_folder './out', '/root/out'
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", keep_color: true, inline: <<-SHELL
+  config.vm.provision 'shell', keep_color: true, inline: <<-SHELL
     set -ex
     apt-get update
     apt-get install -y git build-essential
@@ -27,21 +32,29 @@ Vagrant.configure(2) do |config|
     rm -rfv toolchain*
     curl -s https://tessel-builds.s3.amazonaws.com/firmware/toolchain-mipsel.tar.gz | tar -xz
 
-    # Install node
-    export NODE_VERSION=4.5.0
-    echo "NODE_VERSION=4.5.0" >> /etc/environment
+    # Install NVM
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash
 
-    curl -s https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz | tar -xz
+    # Install node 4.5.0
+    . /root/.nvm/nvm.sh \
+      && nvm install 4.5.0 \
+      && npm install -g pre-gypify node-pre-gyp node-gyp \
+      && node-gyp install 4.5.0
 
-    export PATH=$PATH:/root/node-v${NODE_VERSION}-linux-x64/bin
-    echo "PATH=$PATH:/root/node-v${NODE_VERSION}-linux-x64/bin" >> /etc/environment
+    # Install node 6.5.0
+    . /root/.nvm/nvm.sh \
+      && nvm install 6.5.0 \
+      && npm install -g pre-gypify node-pre-gyp node-gyp \
+      && node-gyp install 6.5.0
 
-    npm install -g pre-gypify node-pre-gyp node-gyp
-    node-gyp install $NODE_VERSION
   SHELL
 
-  config.vm.provision "file", source: "compile.sh", destination: "/home/vagrant/compile.sh"
-  config.vm.provision "shell", keep_color: true, inline: <<-SHELL
+  config.vm.provision(
+    'file',
+    source: 'compile.sh',
+    destination: '/home/vagrant/compile.sh'
+  )
+  config.vm.provision 'shell', keep_color: true, inline: <<-SHELL
     cp /home/vagrant/compile.sh /root/
     mkdir -p /root/out
   SHELL

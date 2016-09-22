@@ -10,4 +10,5 @@ fi
 
 cd $(dirname $0)
 mkdir -p ./out
-vagrant ssh -c "sudo su root /root/compile.sh $PACKAGE_NAME /root/out/"
+vagrant ssh -c "sudo su root /root/compile.sh $PACKAGE_NAME /root/out/ 4.5.0"
+vagrant ssh -c "sudo su root /root/compile.sh $PACKAGE_NAME /root/out/ 6.5.0"

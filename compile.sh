@@ -3,6 +3,10 @@ set -e
 
 PACKAGE_NAME=$1
 OUTPUT_DIR=$2
+. /root/.nvm/nvm.sh
+[ -n "$3" ] && nvm use $3
+NODE_VERSION=`node -p process.versions.node`
+
 ARCH=mipsel
 export STAGING_DIR=/root
 
@@ -16,8 +20,6 @@ if [ ! -d "$OUTPUT_DIR" ]; then
   (>&2 echo "ERROR: The output directory ${OUTPUT_DIR} doesn't exist")
   exit 1
 fi
-
-: "${NODE_VERSION?Need to set the env var NODE_VERSION}"
 
 cd $(dirname $0)
 
