@@ -1,5 +1,5 @@
 FROM buildpack-deps:jessie-scm
-ENV DOCKER_FILE_VERSION 0.0.2
+ENV DOCKER_FILE_VERSION 0.0.3
 
 WORKDIR /root/
 
