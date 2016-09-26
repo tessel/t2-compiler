@@ -65,12 +65,14 @@ set -x
 npm install --ignore-scripts # 2>1 >/dev/null
 pre-gypify --package_name "{name}-{version}-{configuration}-{node_abi}-{platform}-{arch}.tgz"
 
+PACKAGE_VERSION=`node -p "require('./package.json').version"`
+
 echo "Release build"
 node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
 node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
-mv -vn build/stage/*.tgz $OUTPUT_DIR
+mv -vn build/stage/$PACKAGE_VERSION/*.tgz $OUTPUT_DIR
 
 echo "Debug build"
 node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
 node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
-mv -vn build/stage/*.tgz $OUTPUT_DIR
+mv -vn build/stage/$PACKAGE_VERSION/*.tgz $OUTPUT_DIR
