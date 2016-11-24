@@ -13,7 +13,7 @@ RUN apt-get update \
   && apt-get clean -y
 
 # Install NVM
-RUN ["/bin/bash", "-c", "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash"]
+RUN ["/bin/bash", "-c", "curl -s -o - https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash"]
 
 # Install node 4.5.0
 RUN ["/bin/bash", "-c", ". /root/.nvm/nvm.sh \

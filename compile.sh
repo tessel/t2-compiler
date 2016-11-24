@@ -5,7 +5,7 @@ PACKAGE_NAME=$1
 OUTPUT_DIR=$2
 . /root/.nvm/nvm.sh
 [ -n "$3" ] && nvm use $3
-USE_DEBUG=$4
+RELEASE_TYPE=$4
 NODE_VERSION=`node -p process.versions.node`
 
 ARCH=mipsel
@@ -66,7 +66,7 @@ set -x
 npm install --ignore-scripts # 2>1 >/dev/null
 pre-gypify --package_name "{name}-{version}-{configuration}-{node_abi}-{platform}-{arch}.tgz"
 
-if [[ $USE_DEBUG == "debug" ]]; then
+if [[ $RELEASE_TYPE == "debug" ]]; then
   echo "Debug build"
   node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
   node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
