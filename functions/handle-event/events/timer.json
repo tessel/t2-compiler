@@ -1,0 +1,22 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:aws:sns:us-east-1:047869558202:t2-compiler-jobs:3826791e-9e6e-4978-888d-c8f3ddfb4e1c",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "7fe05b7c-b212-50bd-a60c-0bc196121331",
+        "TopicArn": "arn:aws:sns:us-east-1:047869558202:t2-compiler-jobs",
+        "Subject": null,
+        "Message": "{\"type\": \"timer\", \"period\": 600}",
+        "Timestamp": "2016-12-03T19:49:20.130Z",
+        "SignatureVersion": "1",
+        "Signature": "E7YNWDxYAMCao5U7fZM8ehVQ4d0L+H/RDBpf5DM58z2O3anCX2LApqfO5u/HA+1UnqcSS6sKokTPgzTsMXwdMFInd3j9zV0GJIJn3Uu21cEa0QuXw1F6L81PAvha8pmuxx7DzxcMFlcf5s9HgW1iaXDbgxv73ngbCvNMvEkVqynyLRDYBuqQab6ECWGfgUZvMHV6Sra9hmGp6bOEi3oajbbIVGS1B2V3dHvLxCPrSl3iSSToCoOr1jUD2hV0AQs4maSlCbk1KUgKNdqVHVSV4DdGZUdHd9q38EnbQbxLV3Y7Bf+zxIRwI5hm7D6JNCFb5BYJZdQOu3L+BeHgWSAREA==",
+        "SigningCertUrl": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-b95095beb82e8f6a046b3aafc7f4149a.pem",
+        "UnsubscribeUrl": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:047869558202:t2-compiler-jobs:3826791e-9e6e-4978-888d-c8f3ddfb4e1c",
+        "MessageAttributes": {}
+      }
+    }
+  ]
+}
