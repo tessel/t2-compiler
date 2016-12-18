@@ -1,7 +1,12 @@
-language: node_js
-node_js:
-  - "4.2.1"
+sudo: required
+
+services:
+- docker
+
 before_install:
-  - npm install -g grunt-cli
-install: npm install
-script: grunt
+- mkdir -p out
+- docker build ./ -t t2-compiler:dev
+
+script:
+- docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.7 /out
+- test -f out/serialport-4.0.7-Release-node-v46-linux-mipsel.tgz

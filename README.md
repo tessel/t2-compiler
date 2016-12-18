@@ -1,15 +1,14 @@
 # t2-compiler
 [![Code of Conduct](https://img.shields.io/badge/%E2%9D%A4-code%20of%20conduct-blue.svg?style=flat)](https://github.com/tessel/project/blob/master/CONDUCT.md)
-
-[Docker Hub | tessel/t2-compiler](https://hub.docker.com/r/tessel/t2-compiler/)
-
-<!--
-    This stuff is pointless to display until we have an actual server written
-
 [![Travis Build Status](https://travis-ci.org/tessel/t2-compiler.svg?branch=master)](https://travis-ci.org/tessel/t2-compiler)
-[![Build status](https://ci.appveyor.com/api/projects/status/fsjh9hxbf1w09794?svg=true)](https://ci.appveyor.com/project/rwaldron/t2-compiler)
 
--->
+The server component can be found at [t2-auto-compiler](https://github.com/tessel/t2-auto-compiler)
+
+## Publishing
+
+Is done automatically from master at with docker hub.
+
+- [Docker Hub | tessel/t2-compiler](https://hub.docker.com/r/tessel/t2-compiler/)
 
 ## Building Packages
 
