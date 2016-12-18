@@ -1,4 +1,2 @@
 .vagrant
 out
-*.conf
-node_modules
