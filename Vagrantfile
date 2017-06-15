@@ -41,11 +41,11 @@ Vagrant.configure(2) do |config|
       && npm install -g pre-gypify node-pre-gyp node-gyp \
       && node-gyp install 4.5.0
 
-    # Install node 6.5.0
+    # Install node 6.10.3
     . /root/.nvm/nvm.sh \
-      && nvm install 6.5.0 \
+      && nvm install 6.10.3 \
       && npm install -g pre-gypify node-pre-gyp node-gyp \
-      && node-gyp install 6.5.0
+      && node-gyp install 6.10.3
 
   SHELL
 

@@ -9,6 +9,6 @@ before_install:
 
 script:
 - docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.7 /out 4.5.0 release
-- docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.7 /out 6.5.0 release
+- docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.7 /out 6.10.3 release
 - test -f out/serialport-4.0.7-Release-node-v46-linux-mipsel.tgz
 - test -f out/serialport-4.0.7-Release-node-v48-linux-mipsel.tgz
