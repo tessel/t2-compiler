@@ -19,7 +19,7 @@ Install vagrant
 
 ```
 vagrant up
-./compile-vagrant.sh serialport@2.0.5
+./compile-vagrant.sh serialport@6
 ```
 
 Look in the 'out' directory
@@ -29,14 +29,21 @@ Look in the 'out' directory
 If you want to use docker you can run;
 
 ```bash
-# puts the output in the `./out` directory (wont overwrite existing files)
-./compile-docker.sh serialport@4.0.0
+# puts the output in the `./out` directory (adds new files)
+./compile-docker.sh serialport@6
 ```
 
 To update to the latest t2-compiler from docker hub.
 
 ```bash
 docker pull tessel/t2-compiler
+```
+
+To output the build on the last line of docker output in JSON containing BASE64 encoded strings
+```bash
+docker run --rm tessel/t2-compiler $1 6.5.0 release JSON
+# build output followed by file contents
+# {"serialport-6.0.3-Release-node-v46-linux-mipsel.tgz":"H4s....."}
 ```
 
 #### Developing the compiler
@@ -52,7 +59,9 @@ docker images
 # t2-compiler:dev      latest              75f126974601        About a minute ago   1.281 GB
 
 # Run the local image you've built
-docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport@4.0.0 /out
+docker run --rm -v `pwd`/out:/out t2-compiler:dev serialport 6.5.0 release /out
+# or
+docker run --rm t2-compiler:dev serialport 6.5.0 release JSON
 ```
 
 To get an interactive shell run
