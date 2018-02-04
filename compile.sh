@@ -88,7 +88,7 @@ fi
 
 cd $(dirname $0)
 if [[ $OUTPUT_DIR == 'JSON' ]]; then
-  node ./output-files.js build/package/build/stage
+  node ./upload-files.js build/package/build/stage
 else
   mv -vn build/package/build/stage/*.tgz $OUTPUT_DIR
 fi

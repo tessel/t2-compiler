@@ -2,6 +2,9 @@
 const fs = require('fs')
 const path = require('path')
 const outputDir = process.argv[2]
+
+const { uploadKey } = process.env
+
 if (!outputDir) {
   console.log('Error no output dir')
   console.log(`Usage: ${__filename} OUTPUT_DIR`)
