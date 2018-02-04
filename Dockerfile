@@ -23,6 +23,6 @@ RUN ["/bin/bash", "-c", ". /root/.nvm/nvm.sh \
   && node-gyp install 6.5.0 \
   "]
 
-COPY compile.sh output-files.js /root/
+COPY compile.sh upload-files.js /root/
 ENTRYPOINT ["/root/compile.sh"]
 CMD ["--help"]

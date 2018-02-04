@@ -25,9 +25,14 @@ if [[ $PACKAGE_NAME == '--help' || $PACKAGE_NAME == '' ]]; then
 	exit 1
 fi
 
-if [[ $OUTPUT_DIR != 'JSON' ]]; then
+if [[ $OUTPUT_DIR != 'S3' ]]; then
   if [ ! -d "$OUTPUT_DIR" ]; then
     (>&2 echo "ERROR: The output directory ${OUTPUT_DIR} doesn't exist, must be a valid directory or JSON")
+    exit 1
+  fi
+else
+  if [ ! -n $S3_RELEASE_URL ]; then
+    (>&2 echo "ERROR: The S3_RELEASE_URL variable should be set for upload to S3")
     exit 1
   fi
 fi
@@ -87,7 +92,7 @@ else
 fi
 
 cd $(dirname $0)
-if [[ $OUTPUT_DIR == 'JSON' ]]; then
+if [[ $OUTPUT_DIR == 'S3' ]]; then
   node ./upload-files.js build/package/build/stage
 else
   mv -vn build/package/build/stage/*.tgz $OUTPUT_DIR

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs')
+const https = require('https')
 const path = require('path')
+const url = require('url')
 const outputDir = process.argv[2]
 
-const { uploadKey } = process.env
+const releaseURL = url.parse(process.env.S3_RELEASE_URL)
 
 if (!outputDir) {
   console.log('Error no output dir')
@@ -13,10 +15,22 @@ if (!outputDir) {
 
 const files = fs.readdirSync(outputDir).filter(file => file.match(/\.tgz$/))
 
-console.log(`Outputting ${JSON.stringify(files, null, 2)}`)
-const data = {}
 files.forEach(filename => {
-  data[filename] = fs.readFileSync(path.join(outputDir, filename)).toString('BASE64')
-})
+  console.log(`Starting request to S3 for ${filename}: ${S3_RELEASE_URL}`)
 
-console.log(JSON.stringify(data))
+  const stream = fs.createReadStream(path.join(outputDir, filename))
+  const request = https.request(
+    Object.assign(
+      releaseURL,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Length': fs.statSync(path.join(outputDir, filename)).size,
+        },
+      }
+    ),
+    (response) => response.pipe(process.stdout),
+  )
+
+  stream.pipe(request)
+})
