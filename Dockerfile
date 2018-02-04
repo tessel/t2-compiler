@@ -18,10 +18,11 @@ RUN ["/bin/bash", "-c", "curl -s -o - https://raw.githubusercontent.com/creation
 # Install node 6.5.0
 RUN ["/bin/bash", "-c", ". /root/.nvm/nvm.sh \
   && nvm install 6.5.0 \
+  && npm install -g npm \
   && npm install -g pre-gypify node-pre-gyp node-gyp \
   && node-gyp install 6.5.0 \
   "]
 
-COPY ./compile.sh /root/
+COPY compile.sh output-files.js /root/
 ENTRYPOINT ["/root/compile.sh"]
 CMD ["--help"]

@@ -1,25 +1,35 @@
 #!/bin/bash
 set -e
-
+echo "# compile.sh $1 $2 $3 $4"
 PACKAGE_NAME=$1
-OUTPUT_DIR=$2
+
+echo "loading nvm"
 . /root/.nvm/nvm.sh
-[ -n "$3" ] && nvm use $3
-RELEASE_TYPE=$4
+
+RELEASE_TYPE=$3
+OUTPUT_DIR=$4
+
+if [ -n $2 ]; then
+  echo "# installing node $2"
+  nvm install $2
+fi
+
 NODE_VERSION=`node -p process.versions.node`
 
 ARCH=mipsel
 export STAGING_DIR=/root
 
-if [[ "$PACKAGE_NAME" == '--help' || "$PACKAGE_NAME" == '' ]]; then
+if [[ $PACKAGE_NAME == '--help' || $PACKAGE_NAME == '' ]]; then
   echo "Usage: "
-	echo "    $0 [package name]<@version> [output_dir/]"
+	echo "    $0 [package name]<@version> [nodeversion releaseType outputdir]"
 	exit 1
 fi
 
-if [ ! -d "$OUTPUT_DIR" ]; then
-  (>&2 echo "ERROR: The output directory ${OUTPUT_DIR} doesn't exist")
-  exit 1
+if [[ $OUTPUT_DIR != 'JSON' ]]; then
+  if [ ! -d "$OUTPUT_DIR" ]; then
+    (>&2 echo "ERROR: The output directory ${OUTPUT_DIR} doesn't exist, must be a valid directory or JSON")
+    exit 1
+  fi
 fi
 
 cd $(dirname $0)
@@ -43,7 +53,7 @@ export PATH=$TOOLCHAIN_DIR/bin:$PATH
 export CPPPATH=$TARGET_DIR/usr/include
 export LIBPATH=$TARGET_DIR/usr/lib
 
-#TODO: anything better than this hack?
+# TODO: anything better than this hack?
 OPTS="-I $SYSROOT/usr/include -L $TOOLCHAIN_DIR/lib -L $SYSROOT/usr/lib -L $SYSROOT/lib"
 
 export CC="${TARGET_CROSS}gcc $OPTS"
@@ -70,10 +80,15 @@ if [[ $RELEASE_TYPE == "debug" ]]; then
   echo "Debug build"
   node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
   node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION --debug
-  mv -vn build/stage/*.tgz $OUTPUT_DIR
 else
   echo "Release build"
   node-pre-gyp rebuild --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
   node-pre-gyp package --target_platform=linux --target_arch=$ARCH --target=$NODE_VERSION
-  mv -vn build/stage/*.tgz $OUTPUT_DIR
+fi
+
+cd $(dirname $0)
+if [[ $OUTPUT_DIR == 'JSON' ]]; then
+  node ./upload-files.js build/package/build/stage
+else
+  mv -vn build/package/build/stage/*.tgz $OUTPUT_DIR
 fi
