@@ -49,6 +49,8 @@ rm -rf build
 mkdir build
 cd build
 
+echo "Starting package"
+
 npm pack $PACKAGE_NAME > /dev/null;
 tar xf *.tgz;
 cd package

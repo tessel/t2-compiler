@@ -15,12 +15,12 @@ RUN apt-get update \
 # Install NVM
 RUN ["/bin/bash", "-c", "curl -s -o - https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash"]
 
-# Install node 6.5.0
+# Install node 8.11.3
 RUN ["/bin/bash", "-c", ". /root/.nvm/nvm.sh \
-  && nvm install 6.5.0 \
+  && nvm install 8.11.3 \
   && npm install -g npm \
   && npm install -g pre-gypify node-pre-gyp node-gyp \
-  && node-gyp install 6.5.0 \
+  && node-gyp install 8.11.3 \
   "]
 
 COPY compile.sh upload-files.js /root/
